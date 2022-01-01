@@ -6,29 +6,35 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ConversationViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+       
     }
     
     override func viewDidAppear(_ animated: Bool) {
            super.viewDidAppear(animated)
-           let isLoggedIn = UserDefaults.standard.bool(forKey: "logged_in")
-           if !isLoggedIn {
-               // present login view controller
-               
-               let vc = LoginViewController()
-               let nav = UINavigationController(rootViewController: vc)
-               //full screen to not dismiss the log in screen
-               nav.modalPresentationStyle = .fullScreen
-               present(nav, animated: false)
-           }
+        
+           //if no current user is logged in navigate to login page
+           validateUser()
+        
+       
        }
-
+    
+    func validateUser()
+    {
+        if FirebaseAuth.Auth.auth().currentUser == nil{
+            let vc = LoginViewController()
+            let nav = UINavigationController(rootViewController: vc)
+            //full screen to not dismiss the log in screen
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: false)
+        }
+    }
  
 
 }

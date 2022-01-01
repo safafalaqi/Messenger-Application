@@ -212,25 +212,41 @@ class RegisterViewController: UIViewController {
               !fName.isEmpty,
               !lName.isEmpty,
               !email.isEmpty,
-              !password.isEmpty else{ return}
+              !password.isEmpty,
+              password.count >= 6 else{ return}
         
-        //create an account in Firebase
-        
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult , error  in
-            guard let result = authResult, error == nil else {
-                print("Error creating user")
+        //before creating a new user  make sure user with same email doesnot exisit
+        DatabaseManger.shared.userExists(with: email, completion:{ exists in
+            //check if ex is nil
+            guard !exists else{
+                //user exists
+                self.showAlertVC(message: "User is already exists")
                 return
             }
-            let user = result.user
-            print("Created User: \(user)")
+        })
+        
+        //create an account in Firebase
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: {[weak self]  authResult , error  in
+            guard let strongSelf = self else {
+                   return
+               }
+            guard authResult != nil, error == nil else {
+                print("Error creating user")
+                
+                return
+            }
+        
+            //before dissmising add to the database the first name and the last name
+            DatabaseManger.shared.insertUser(with: ChatAppUser(firstName: fName , lastName: lName, emailAddress: email))
+            
+            
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
 
-
-//        showAlertVC(title: "Register tapped")
     }
     
-    func showAlertVC(title: String) {
-        let alertController = UIAlertController(title: title, message: "Need to implement code based on user requirements", preferredStyle: UIAlertController.Style.alert)
+    func showAlertVC(message: String = "Enter all required information") {
+        let alertController = UIAlertController(title: "Error!", message: message, preferredStyle: UIAlertController.Style.alert)
         let cancelAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion:{})

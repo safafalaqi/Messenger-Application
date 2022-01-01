@@ -194,17 +194,21 @@ class LoginViewController: UIViewController {
               !email.isEmpty,
               !password.isEmpty else{ return}
         
-        // Firebase Login
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { authResult, error in
+        // Firebase Login weak self to avoid retention cycle
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self]  authResult, error in
+            guard let strongSelf = self else {
+                    return
+                }
             guard let result = authResult, error == nil else {
                 print("Failed to log in user with email \(email)")
                 return
             }
             let user = result.user
             print("logged in user: \(user)")
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
-
-    }
+                                        
+     }
     
     @objc private func signUpButtonTapped(button: UIButton) {
 
@@ -220,7 +224,7 @@ class LoginViewController: UIViewController {
     }
     
     func showAlertVC(title: String) {
-        let alertController = UIAlertController(title: title, message: "Need to implement code based on user requirements", preferredStyle: UIAlertController.Style.alert)
+        let alertController = UIAlertController(title: title, message: "", preferredStyle: UIAlertController.Style.alert)
         let cancelAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion:{})

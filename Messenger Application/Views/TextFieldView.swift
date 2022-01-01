@@ -21,6 +21,7 @@ class TextFieldView: UIView {
     let textField : UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.autocorrectionType = .no
         return textField
     }()
     

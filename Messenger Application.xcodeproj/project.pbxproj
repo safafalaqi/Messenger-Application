@@ -23,6 +23,7 @@
 		855AF6A9277CF95A00E7088B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 855AF6A7277CF95A00E7088B /* LaunchScreen.storyboard */; };
 		85665033277E90E100B4FA60 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 85665032277E90E100B4FA60 /* background.png */; };
 		85665037277E919900B4FA60 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 85665036277E919900B4FA60 /* logo.png */; };
+		85940D9A2780C7620064B240 /* DatabaseManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85940D992780C7620064B240 /* DatabaseManger.swift */; };
 		D2E43B761EA1789022B66C17 /* Pods_Messenger_Application.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522970D1EB6602447B4DBA25 /* Pods_Messenger_Application.framework */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,7 @@
 		855AF6AA277CF95A00E7088B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85665032277E90E100B4FA60 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		85665036277E919900B4FA60 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
+		85940D992780C7620064B240 /* DatabaseManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManger.swift; sourceTree = "<group>"; };
 		BA20CBF6A01D48DF92314ABE /* Pods-Messenger Application.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger Application.release.xcconfig"; path = "Target Support Files/Pods-Messenger Application/Pods-Messenger Application.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -158,6 +160,7 @@
 		85940D982780B9C00064B240 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				85940D992780C7620064B240 /* DatabaseManger.swift */,
 				855AF69E277CF95600E7088B /* SceneDelegate.swift */,
 				855AF69C277CF95600E7088B /* AppDelegate.swift */,
 			);
@@ -301,6 +304,7 @@
 				8552CEBE277F4BED00AD85C3 /* VideoPlayerViewController.swift in Sources */,
 				85474222277E25EF00368235 /* ConversationViewController.swift in Sources */,
 				85474226277E263900368235 /* ProfileViewController.swift in Sources */,
+				85940D9A2780C7620064B240 /* DatabaseManger.swift in Sources */,
 				8552CEC1277F60D400AD85C3 /* TextFieldView.swift in Sources */,
 				8552CEBC277F4BC900AD85C3 /* PhotoViewerViewController.swift in Sources */,
 				855AF69F277CF95600E7088B /* SceneDelegate.swift in Sources */,
