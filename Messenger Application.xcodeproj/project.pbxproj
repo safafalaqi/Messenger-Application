@@ -136,7 +136,7 @@
 		855AF69B277CF95600E7088B /* Messenger Application */ = {
 			isa = PBXGroup;
 			children = (
-				85A32C5F2780B10D0024E4D5 /* Resources */,
+				85940D972780B8F40064B240 /* Resources */,
 				85A32C5B2780B0080024E4D5 /* Controllers */,
 				8552CEBF277F608300AD85C3 /* extentions */,
 				85474227277E265F00368235 /* Views */,
@@ -155,6 +155,15 @@
 			path = images;
 			sourceTree = "<group>";
 		};
+		85940D972780B8F40064B240 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				855AF69E277CF95600E7088B /* SceneDelegate.swift */,
+				855AF69C277CF95600E7088B /* AppDelegate.swift */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		85A32C5B2780B0080024E4D5 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -166,16 +175,6 @@
 				8552CEBD277F4BED00AD85C3 /* VideoPlayerViewController.swift */,
 			);
 			path = Controllers;
-			sourceTree = "<group>";
-		};
-		85A32C5F2780B10D0024E4D5 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				855AF69C277CF95600E7088B /* AppDelegate.swift */,
-				855AF69E277CF95600E7088B /* SceneDelegate.swift */,
-			);
-			name = Resources;
-			path = Resources/Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
