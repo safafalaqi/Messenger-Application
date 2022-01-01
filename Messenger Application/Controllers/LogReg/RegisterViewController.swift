@@ -39,11 +39,10 @@ class RegisterViewController: UIViewController {
     let bgView : UIView = {
         let bgView = UIView()
         bgView.translatesAutoresizingMaskIntoConstraints = false
-        //bgView.backgroundColor = UIColor(displayP3Red: 9.0/255.0, green: 33.0/255.0, blue: 47.0/255.0, alpha: 1.0).withAlphaComponent(0.7)
         return bgView
     }()
     
-    let fisrtName : TextFieldView = {
+    let firstName : TextFieldView = {
         let textFieldView = TextFieldView()
         textFieldView.translatesAutoresizingMaskIntoConstraints = false
         textFieldView.backgroundColor = UIColor.clear
@@ -90,6 +89,29 @@ class RegisterViewController: UIViewController {
         let gesture = UITapGestureRecognizer(target: self,
                                              action: #selector(didTapChangeProfilePic))
         accountImage.addGestureRecognizer(gesture)
+        
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
+        self.view.addGestureRecognizer(tapGesture)
+
+        //to move the cursor to next field
+        firstName.textField.delegate = self
+        lastName.textField.delegate = self
+        emailTextField.textField.delegate = self
+        passwordTextfield.textField.delegate = self
+
+        firstName.textField.tag = 1
+        lastName.textField.tag = 2
+        emailTextField.textField.tag = 3
+        passwordTextfield.textField.tag = 4
+     
+    }
+    //to hide keyboard when clicking outside the text fields
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        firstName.textField.resignFirstResponder()
+        lastName.textField.resignFirstResponder()
+        emailTextField.textField.resignFirstResponder()
+        passwordTextfield.textField.resignFirstResponder()
     }
     
     override func viewWillLayoutSubviews() {
@@ -132,26 +154,26 @@ class RegisterViewController: UIViewController {
         accountImage.widthAnchor.constraint(equalTo: accountImage.heightAnchor, constant: 0.0).isActive = true
         accountImage.isUserInteractionEnabled = true
         accountImage.tintColor = templateColor
-        //accountImage.layer.cornerRadius = 90
+       
 
         
         // First Name
-        view.insertSubview(fisrtName, aboveSubview: bgView)
-        fisrtName.topAnchor.constraint(equalTo: accountImage.bottomAnchor, constant: 20.0).isActive = true
-        fisrtName.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding).isActive = true
-        fisrtName.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding).isActive = true
-        fisrtName.heightAnchor.constraint(equalToConstant: textFieldViewHeight).isActive = true
+        view.insertSubview(firstName, aboveSubview: bgView)
+        firstName.topAnchor.constraint(equalTo: accountImage.bottomAnchor, constant: 20.0).isActive = true
+        firstName.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding).isActive = true
+        firstName.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding).isActive = true
+        firstName.heightAnchor.constraint(equalToConstant: textFieldViewHeight).isActive = true
         
-        fisrtName.imgView.image = UIImage(systemName:"person.crop.circle")
+        firstName.imgView.image = UIImage(systemName:"person.crop.circle")
         let attributesDictionary = [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
-        fisrtName.textField.attributedPlaceholder = NSAttributedString(string: "First Name", attributes: attributesDictionary)
-        fisrtName.textField.textColor = templateColor
+        firstName.textField.attributedPlaceholder = NSAttributedString(string: "First Name", attributes: attributesDictionary)
+        firstName.textField.textColor = templateColor
         
         
         
         // Last Name add it above the background
         view.insertSubview(lastName, aboveSubview: bgView)
-        lastName.topAnchor.constraint(equalTo: fisrtName.bottomAnchor, constant: 10.0).isActive = true
+        lastName.topAnchor.constraint(equalTo: firstName.bottomAnchor, constant: 10.0).isActive = true
         lastName.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding).isActive = true
         lastName.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding).isActive = true
         lastName.heightAnchor.constraint(equalToConstant: textFieldViewHeight).isActive = true
@@ -205,7 +227,7 @@ class RegisterViewController: UIViewController {
     }
     
     @objc private func registerButtonTapped(button: UIButton) {
-        guard let fName = fisrtName.textField.text,
+        guard let fName = firstName.textField.text,
               let lName = lastName.textField.text,
               let email = emailTextField.textField.text,
               let password = passwordTextfield.textField.text,
@@ -313,3 +335,15 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
 
 }
 
+
+extension RegisterViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        //Check if there is any other text-field in the view whose tag is +1 greater than the current text-field on which the return key was pressed. If yes → then move the cursor to that next text-field. If No → Dismiss the keyboard
+        if let nextField = self.view.viewWithTag(textField.tag + 1) as? UITextField {
+            nextField.becomeFirstResponder()
+            } else {
+                registerButtonTapped(button: registerButton)
+            }
+        return false
+    }
+}

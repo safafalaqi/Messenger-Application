@@ -74,8 +74,19 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
+        self.view.addGestureRecognizer(tapGesture)
+
+        emailTextField.textField.delegate = self
+        passwordTextfield.textField.delegate = self
+        emailTextField.textField.tag = 1
+        passwordTextfield.textField.tag = 2
     }
-    
+    //to hide keyboard when clicking outside the text fields
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        emailTextField.textField.resignFirstResponder()
+        passwordTextfield.textField.resignFirstResponder()
+    }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -192,7 +203,9 @@ class LoginViewController: UIViewController {
         guard let email = emailTextField.textField.text,
               let password = passwordTextfield.textField.text,
               !email.isEmpty,
-              !password.isEmpty else{ return}
+              !password.isEmpty else{
+                  showAlertVC(title: "Enter a correct email and password")
+                  return}
         
         // Firebase Login weak self to avoid retention cycle
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self]  authResult, error in
@@ -201,6 +214,7 @@ class LoginViewController: UIViewController {
                 }
             guard let result = authResult, error == nil else {
                 print("Failed to log in user with email \(email)")
+                strongSelf.showAlertVC(title: "Enter a correct email and password")
                 return
             }
             let user = result.user
@@ -220,7 +234,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func forgotPasswordButtonTapped(button: UIButton) {
-        showAlertVC(title: "Forgot password tapped")
+    
     }
     
     func showAlertVC(title: String) {
@@ -232,4 +246,14 @@ class LoginViewController: UIViewController {
 }
 
 
-
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        //Check if there is any other text-field in the view whose tag is +1 greater than the current text-field on which the return key was pressed. If yes → then move the cursor to that next text-field. If No → Dismiss the keyboard
+        if let nextField = self.view.viewWithTag(textField.tag + 1) as? UITextField {
+            nextField.becomeFirstResponder()
+            } else {
+                signInButtonTapped(button: signInButton)
+            }
+        return false
+    }
+}
