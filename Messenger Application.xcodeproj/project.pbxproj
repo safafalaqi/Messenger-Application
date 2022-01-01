@@ -136,7 +136,7 @@
 		855AF69B277CF95600E7088B /* Messenger Application */ = {
 			isa = PBXGroup;
 			children = (
-				85940D972780B8F40064B240 /* Resources */,
+				85940D982780B9C00064B240 /* Resources */,
 				85A32C5B2780B0080024E4D5 /* Controllers */,
 				8552CEBF277F608300AD85C3 /* extentions */,
 				85474227277E265F00368235 /* Views */,
@@ -155,7 +155,7 @@
 			path = images;
 			sourceTree = "<group>";
 		};
-		85940D972780B8F40064B240 /* Resources */ = {
+		85940D982780B9C00064B240 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				855AF69E277CF95600E7088B /* SceneDelegate.swift */,
