@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>789471406115-ilieu3jc5ka9a67dqctknfbtmmi2f9ao.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.789471406115-ilieu3jc5ka9a67dqctknfbtmmi2f9ao</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDoNXEaaLL4bw_C2VDlyIbqKOCBTUtseFQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>789471406115</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>Safa.Messenger-Application</string>
+	<key>PROJECT_ID</key>
+	<string>messenger-application-acf24</string>
+	<key>STORAGE_BUCKET</key>
+	<string>messenger-application-acf24.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:789471406115:ios:441c302b84dff40e4ae996</string>
+</dict>
+</plist>
