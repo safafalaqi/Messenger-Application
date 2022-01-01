@@ -6,7 +6,7 @@
 //
 
 import UIKit
-//import FirebaseAuth
+import FirebaseAuth
 //import JGProgressHUD
 
 class LoginViewController: UIViewController {
@@ -189,13 +189,26 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func signInButtonTapped(button: UIButton) {
-        showAlertVC(title: "Sign In tapped")
+        guard let email = emailTextField.textField.text,
+              let password = passwordTextfield.textField.text,
+              !email.isEmpty,
+              !password.isEmpty else{ return}
+        
+        // Firebase Login
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { authResult, error in
+            guard let result = authResult, error == nil else {
+                print("Failed to log in user with email \(email)")
+                return
+            }
+            let user = result.user
+            print("logged in user: \(user)")
+        })
+
     }
     
     @objc private func signUpButtonTapped(button: UIButton) {
-        //showAlertVC(title: "Sign up tapped")
+
         //navigate to sign up page
-        
         let vc = RegisterViewController()
         vc.title =  "Create Account"
         navigationController?.pushViewController(vc, animated: true)

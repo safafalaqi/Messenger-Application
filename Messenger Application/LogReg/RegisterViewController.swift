@@ -6,7 +6,7 @@
 //
 
 import UIKit
-//import FirebaseAuth
+import FirebaseAuth
 //import JGProgressHUD
 
 class RegisterViewController: UIViewController {
@@ -205,7 +205,28 @@ class RegisterViewController: UIViewController {
     }
     
     @objc private func registerButtonTapped(button: UIButton) {
-        showAlertVC(title: "Register tapped")
+        guard let fName = fisrtName.textField.text,
+              let lName = lastName.textField.text,
+              let email = emailTextField.textField.text,
+              let password = passwordTextfield.textField.text,
+              !fName.isEmpty,
+              !lName.isEmpty,
+              !email.isEmpty,
+              !password.isEmpty else{ return}
+        
+        //create an account in Firebase
+        
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult , error  in
+            guard let result = authResult, error == nil else {
+                print("Error creating user")
+                return
+            }
+            let user = result.user
+            print("Created User: \(user)")
+        })
+
+
+//        showAlertVC(title: "Register tapped")
     }
     
     func showAlertVC(title: String) {
