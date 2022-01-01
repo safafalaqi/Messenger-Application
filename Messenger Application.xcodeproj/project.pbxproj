@@ -76,21 +76,7 @@
 				39724FA9966617983B0F2C3B /* Pods-Messenger Application.debug.xcconfig */,
 				BA20CBF6A01D48DF92314ABE /* Pods-Messenger Application.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		851FF321277FE83F00C2E9EA /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				8552CEBB277F4BC900AD85C3 /* PhotoViewerViewController.swift */,
-				85474220277E25B500368235 /* LogReg */,
-				85474221277E25EF00368235 /* ConversationViewController.swift */,
-				85474223277E262700368235 /* NewConversationViewController.swift */,
-				85474225277E263900368235 /* ProfileViewController.swift */,
-				8552CEBD277F4BED00AD85C3 /* VideoPlayerViewController.swift */,
-			);
-			name = Controllers;
 			sourceTree = "<group>";
 		};
 		85474220277E25B500368235 /* LogReg */ = {
@@ -122,15 +108,6 @@
 			name = Storyboards;
 			sourceTree = "<group>";
 		};
-		8547422A277E26AA00368235 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				855AF69C277CF95600E7088B /* AppDelegate.swift */,
-				855AF69E277CF95600E7088B /* SceneDelegate.swift */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
 		8552CEBF277F608300AD85C3 /* extentions */ = {
 			isa = PBXGroup;
 			children = (
@@ -159,10 +136,10 @@
 		855AF69B277CF95600E7088B /* Messenger Application */ = {
 			isa = PBXGroup;
 			children = (
+				85A32C5F2780B10D0024E4D5 /* Resources */,
+				85A32C5B2780B0080024E4D5 /* Controllers */,
 				8552CEBF277F608300AD85C3 /* extentions */,
-				8547422A277E26AA00368235 /* Resources */,
 				85474227277E265F00368235 /* Views */,
-				851FF321277FE83F00C2E9EA /* Controllers */,
 				855AF6AA277CF95A00E7088B /* Info.plist */,
 				85474217277E121800368235 /* GoogleService-Info.plist */,
 			);
@@ -176,6 +153,29 @@
 				85665032277E90E100B4FA60 /* background.png */,
 			);
 			path = images;
+			sourceTree = "<group>";
+		};
+		85A32C5B2780B0080024E4D5 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				8552CEBB277F4BC900AD85C3 /* PhotoViewerViewController.swift */,
+				85474220277E25B500368235 /* LogReg */,
+				85474221277E25EF00368235 /* ConversationViewController.swift */,
+				85474223277E262700368235 /* NewConversationViewController.swift */,
+				85474225277E263900368235 /* ProfileViewController.swift */,
+				8552CEBD277F4BED00AD85C3 /* VideoPlayerViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		85A32C5F2780B10D0024E4D5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				855AF69C277CF95600E7088B /* AppDelegate.swift */,
+				855AF69E277CF95600E7088B /* SceneDelegate.swift */,
+			);
+			name = Resources;
+			path = Resources/Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
