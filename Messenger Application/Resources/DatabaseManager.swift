@@ -10,9 +10,9 @@ import FirebaseDatabase
 // singleton creation below
 // final - cannot be subclassedcopy
 
-final class DatabaseManger {
+final class DatabaseManager {
     
-    static let shared = DatabaseManger()
+    static let shared = DatabaseManager()
     
     // reference the database below
     
@@ -21,7 +21,7 @@ final class DatabaseManger {
 
 }
 // MARK: - account management
-extension DatabaseManger {
+extension DatabaseManager {
     
     
     

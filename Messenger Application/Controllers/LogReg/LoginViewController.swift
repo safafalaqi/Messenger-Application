@@ -8,10 +8,11 @@
 import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
 //import JGProgressHUD
 
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController{
 
     let templateColor = UIColor.white
     //private let spinner = JGProgressHUD(style: .dark)
@@ -78,21 +79,51 @@ class LoginViewController: UIViewController {
         button.permissions = ["email","public_profile"]
         return button
     }()
-    
+    let googleLoginButton = GIDSignInButton()
+    var loginObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
-        self.view.addGestureRecognizer(tapGesture)
-
+        
+        googleLoginButton.addTarget(self, action: #selector(self.googleSignInButtonTapped), for: .touchUpInside)
+        dismissOnTap()
         emailTextField.textField.delegate = self
         passwordTextfield.textField.delegate = self
         emailTextField.textField.tag = 1
         passwordTextfield.textField.tag = 2
         
         fbLoginButton.delegate = self
+        
+        //https://stackoverflow.com/questions/59419459/how-do-a-comunication-from-viewcontroller-to-appdelegate
+        // comunication from LoginViewController to appdelegate
+        loginObserver = NotificationCenter.default.addObserver(forName: Notification.Name("didLogIn"), object: nil,  queue: .main,using:{ [weak self] _ in
+            guard let strongSelf = self else {return}
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil )
+        })
+        
+    
     }
+    
+    deinit{
+        if let  observer = loginObserver{
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    
+    @objc private func googleSignInButtonTapped() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let signInConfig = appDelegate.signInConfig else {
+            return
+        }
+        GIDSignIn.sharedInstance.signIn(with: signInConfig, presenting: self) { user, error in
+            guard let user = user, error == nil else { return }
+            appDelegate.handleGoogleSession(user: user)
+        }
+    }
+
+    
     //to hide keyboard when clicking outside the text fields
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
         emailTextField.textField.resignFirstResponder()
@@ -176,15 +207,22 @@ class LoginViewController: UIViewController {
         view.insertSubview(fbLoginButton, aboveSubview: bgView)
         fbLoginButton.translatesAutoresizingMaskIntoConstraints = false
         fbLoginButton.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 20.0).isActive = true
-        fbLoginButton.leadingAnchor.constraint(equalTo: signInButton.leadingAnchor, constant: 0.0).isActive = true
-        fbLoginButton.trailingAnchor.constraint(equalTo: signInButton.trailingAnchor, constant: 0.0).isActive = true
+        fbLoginButton.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor, constant: 0.0).isActive = true
+        fbLoginButton.trailingAnchor.constraint(equalTo: emailTextField.trailingAnchor, constant: 0.0).isActive = true
         fbLoginButton.heightAnchor.constraint(equalToConstant: signInButtonHeight).isActive = true
         
-        
+        //google sign in button
+        view.insertSubview(googleLoginButton, aboveSubview: bgView)
+        googleLoginButton.translatesAutoresizingMaskIntoConstraints = false
+        googleLoginButton.topAnchor.constraint(equalTo: fbLoginButton.bottomAnchor, constant: 20.0).isActive = true
+        googleLoginButton.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor, constant: 0.0).isActive = true
+        googleLoginButton.trailingAnchor.constraint(equalTo: emailTextField.trailingAnchor, constant: 0.0).isActive = true
+        googleLoginButton.heightAnchor.constraint(equalToConstant: signInButtonHeight).isActive = true
+    
         
         // Forgot Password Button
         view.insertSubview(forgotPassword, aboveSubview: bgView)
-        forgotPassword.topAnchor.constraint(equalTo: fbLoginButton.bottomAnchor, constant: 20.0).isActive = true
+        forgotPassword.topAnchor.constraint(equalTo: googleLoginButton.bottomAnchor, constant: 20.0).isActive = true
         forgotPassword.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor, constant: 0.0).isActive = true
         forgotPassword.trailingAnchor.constraint(equalTo: emailTextField.trailingAnchor, constant: 0.0).isActive = true
         
@@ -222,7 +260,7 @@ class LoginViewController: UIViewController {
         
         signUpButton.setAttributedTitle(attributedString, for: .normal)
     }
-    
+
     @objc private func signInButtonTapped(button: UIButton) {
         guard let email = emailTextField.textField.text,
               let password = passwordTextfield.textField.text,
@@ -290,7 +328,7 @@ extension LoginViewController: LoginButtonDelegate{
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
         
         guard let token = result?.token?.tokenString else {
-            print("🔵Failed to login with facebook")
+            print("🔴Failed to login with facebook")
             return
         }
         
@@ -302,7 +340,7 @@ extension LoginViewController: LoginButtonDelegate{
                 
                 return
             }
-            print("🟢\(result)")
+            print("🔵\(result)")
             guard let firstName = result["first_name"] as? String,
                   let lastName = result["last_name"] as? String,
                   let email = result["email"] as? String
@@ -311,9 +349,9 @@ extension LoginViewController: LoginButtonDelegate{
                 return
             }
             //we need to add them to the real database but first check if exists
-            DatabaseManger.shared.userExists(with: email, completion:{exists in
+            DatabaseManager.shared.userExists(with: email, completion:{exists in
                 if !exists{
-                    DatabaseManger.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                    DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
                 }
             })
             
@@ -350,5 +388,32 @@ extension LoginViewController: LoginButtonDelegate{
         //no need to implement
     }
     
+    
+}
+
+
+//faced an error with google button and had to conform to gestureRecognizerDelegate to exclude GIDSignInButton
+//https://stackoverflow.com/questions/37741890/google-sign-in-button-does-nothing
+extension LoginViewController:UIGestureRecognizerDelegate{
+    
+    func dismissOnTap() {
+            self.view.isUserInteractionEnabled = true
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
+            tap.delegate = self
+            tap.cancelsTouchesInView = false
+            self.view.addGestureRecognizer(tap)
+     }
+
+        func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+            if touch.view is GIDSignInButton {
+                return false
+            }
+            return true
+        }
+
+        func dismissKeyboard() {
+            self.view.endEditing(true)
+        }
+
     
 }

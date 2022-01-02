@@ -238,7 +238,7 @@ class RegisterViewController: UIViewController {
               password.count >= 6 else{ return}
         
         //before creating a new user  make sure user with same email doesnot exisit
-        DatabaseManger.shared.userExists(with: email, completion:{ exists in
+        DatabaseManager.shared.userExists(with: email, completion:{ exists in
             //check if ex is nil
             guard !exists else{
                 //user exists
@@ -259,7 +259,7 @@ class RegisterViewController: UIViewController {
             }
         
             //before dissmising add to the database the first name and the last name
-            DatabaseManger.shared.insertUser(with: ChatAppUser(firstName: fName , lastName: lName, emailAddress: email))
+            DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: fName , lastName: lName, emailAddress: email))
             
             
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
