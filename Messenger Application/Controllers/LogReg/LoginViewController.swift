@@ -7,7 +7,9 @@
 
 import UIKit
 import FirebaseAuth
+import FBSDKLoginKit
 //import JGProgressHUD
+
 
 class LoginViewController: UIViewController {
 
@@ -71,6 +73,13 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    let fbLoginButton:FBLoginButton = {
+        let button = FBLoginButton()
+        button.permissions = ["email","public_profile"]
+        return button
+    }()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
@@ -81,11 +90,15 @@ class LoginViewController: UIViewController {
         passwordTextfield.textField.delegate = self
         emailTextField.textField.tag = 1
         passwordTextfield.textField.tag = 2
+        
+        fbLoginButton.delegate = self
     }
     //to hide keyboard when clicking outside the text fields
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
         emailTextField.textField.resignFirstResponder()
         passwordTextfield.textField.resignFirstResponder()
+        
+      
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -129,7 +142,7 @@ class LoginViewController: UIViewController {
         let attributesDictionary = [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
         emailTextField.textField.attributedPlaceholder = NSAttributedString(string: "Email", attributes: attributesDictionary)
         emailTextField.textField.textColor = templateColor
- 
+        
         
         // Password textfield and icon
         view.insertSubview(passwordTextfield, aboveSubview: bgView)
@@ -158,9 +171,20 @@ class LoginViewController: UIViewController {
         signInButton.isEnabled = true
         signInButton.addTarget(self, action: #selector(signInButtonTapped(button:)), for: .touchUpInside)
         
+        //facebook sign in button
+        
+        view.insertSubview(fbLoginButton, aboveSubview: bgView)
+        fbLoginButton.translatesAutoresizingMaskIntoConstraints = false
+        fbLoginButton.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 20.0).isActive = true
+        fbLoginButton.leadingAnchor.constraint(equalTo: signInButton.leadingAnchor, constant: 0.0).isActive = true
+        fbLoginButton.trailingAnchor.constraint(equalTo: signInButton.trailingAnchor, constant: 0.0).isActive = true
+        fbLoginButton.heightAnchor.constraint(equalToConstant: signInButtonHeight).isActive = true
+        
+        
+        
         // Forgot Password Button
         view.insertSubview(forgotPassword, aboveSubview: bgView)
-        forgotPassword.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 0.0).isActive = true
+        forgotPassword.topAnchor.constraint(equalTo: fbLoginButton.bottomAnchor, constant: 20.0).isActive = true
         forgotPassword.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor, constant: 0.0).isActive = true
         forgotPassword.trailingAnchor.constraint(equalTo: emailTextField.trailingAnchor, constant: 0.0).isActive = true
         
@@ -210,8 +234,8 @@ class LoginViewController: UIViewController {
         // Firebase Login weak self to avoid retention cycle
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self]  authResult, error in
             guard let strongSelf = self else {
-                    return
-                }
+                return
+            }
             guard let result = authResult, error == nil else {
                 print("Failed to log in user with email \(email)")
                 strongSelf.showAlertVC(title: "Enter a correct email and password")
@@ -221,11 +245,11 @@ class LoginViewController: UIViewController {
             print("logged in user: \(user)")
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
-                                        
-     }
+        
+    }
     
     @objc private func signUpButtonTapped(button: UIButton) {
-
+        
         //navigate to sign up page
         let vc = RegisterViewController()
         vc.title =  "Create Account"
@@ -234,7 +258,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func forgotPasswordButtonTapped(button: UIButton) {
-    
+        
     }
     
     func showAlertVC(title: String) {
@@ -251,9 +275,80 @@ extension LoginViewController: UITextFieldDelegate {
         //Check if there is any other text-field in the view whose tag is +1 greater than the current text-field on which the return key was pressed. If yes → then move the cursor to that next text-field. If No → Dismiss the keyboard
         if let nextField = self.view.viewWithTag(textField.tag + 1) as? UITextField {
             nextField.becomeFirstResponder()
-            } else {
-                signInButtonTapped(button: signInButton)
-            }
+        } else {
+            signInButtonTapped(button: signInButton)
+        }
         return false
     }
+}
+
+
+//facebook LoginButtonDelegate
+//https://developers.facebook.com/docs/reference/ios/current/protocol/FBSDKLoginButtonDelegate
+extension LoginViewController: LoginButtonDelegate{
+    
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        
+        guard let token = result?.token?.tokenString else {
+            print("🔵Failed to login with facebook")
+            return
+        }
+        
+        let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "/me",parameters: ["fields": "email, first_name, last_name"],tokenString: token, version: nil,httpMethod: .get)
+        
+        facebookRequest.start (completion: {connection , result, error in
+            guard let result = result as? [String:Any] , error == nil else {
+                print("🔴failed to make graph request  - \(error)")
+                
+                return
+            }
+            print("🟢\(result)")
+            guard let firstName = result["first_name"] as? String,
+                  let lastName = result["last_name"] as? String,
+                  let email = result["email"] as? String
+            else{
+                print("🔴failed to get email and name")
+                return
+            }
+            //we need to add them to the real database but first check if exists
+            DatabaseManger.shared.userExists(with: email, completion:{exists in
+                if !exists{
+                    DatabaseManger.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                }
+            })
+            
+            
+            //we get the crediential from facebook and pass them to firebase
+            let crediential = FacebookAuthProvider.credential(withAccessToken: token)
+            
+            
+            // now after obtaining the credinetial we pass it to firebase
+            FirebaseAuth.Auth.auth().signIn(with:crediential , completion: { [weak self] authResult ,  error in
+                guard let strongSelf = self else {
+                    return
+                    
+                }
+                
+                guard authResult != nil, error == nil else {
+                    if let error = error{
+                        print("🔴Facebook log in failed  - \(error)")
+                        
+                    }
+                    return
+                }
+                
+                print("🟢Successufly loged in")
+                strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+            })
+            
+        })
+        
+        
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+        //no need to implement
+    }
+    
+    
 }
