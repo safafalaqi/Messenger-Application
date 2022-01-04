@@ -17,6 +17,12 @@ target 'Messenger Application' do
 
    # Google Log In 
    pod 'GoogleSignIn'
+
+  pod 'MessageKit'
+  pod 'JGProgressHUD' # spinner overlay (heads up display)
+  pod 'RealmSwift' # similar to coredata (save to device) optimize
+  pod 'SDWebImage' # Image load capability (caching)
+  pod 'InputBarAccessoryView'
    
 
 end

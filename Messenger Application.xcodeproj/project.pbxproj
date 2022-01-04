@@ -21,6 +21,7 @@
 		855AF6A4277CF95600E7088B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 855AF6A2277CF95600E7088B /* Main.storyboard */; };
 		855AF6A6277CF95A00E7088B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 855AF6A5277CF95A00E7088B /* Assets.xcassets */; };
 		855AF6A9277CF95A00E7088B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 855AF6A7277CF95A00E7088B /* LaunchScreen.storyboard */; };
+		855D39912783A9E6004FC869 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855D39902783A9E6004FC869 /* ChatViewController.swift */; };
 		85665033277E90E100B4FA60 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 85665032277E90E100B4FA60 /* background.png */; };
 		85665037277E919900B4FA60 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 85665036277E919900B4FA60 /* logo.png */; };
 		85940D9A2780C7620064B240 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85940D992780C7620064B240 /* DatabaseManager.swift */; };
@@ -46,6 +47,7 @@
 		855AF6A5277CF95A00E7088B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		855AF6A8277CF95A00E7088B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		855AF6AA277CF95A00E7088B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		855D39902783A9E6004FC869 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		85665032277E90E100B4FA60 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		85665036277E919900B4FA60 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 		85940D992780C7620064B240 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
@@ -110,6 +112,13 @@
 			name = Storyboards;
 			sourceTree = "<group>";
 		};
+		85497FB8278264F60085626F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		8552CEBF277F608300AD85C3 /* extentions */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,6 +147,7 @@
 		855AF69B277CF95600E7088B /* Messenger Application */ = {
 			isa = PBXGroup;
 			children = (
+				85497FB8278264F60085626F /* Models */,
 				85940D982780B9C00064B240 /* Resources */,
 				85474227277E265F00368235 /* Views */,
 				85A32C5B2780B0080024E4D5 /* Controllers */,
@@ -176,6 +186,7 @@
 				85474223277E262700368235 /* NewConversationViewController.swift */,
 				85474225277E263900368235 /* ProfileViewController.swift */,
 				8552CEBD277F4BED00AD85C3 /* VideoPlayerViewController.swift */,
+				855D39902783A9E6004FC869 /* ChatViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -308,6 +319,7 @@
 				8552CEC1277F60D400AD85C3 /* TextFieldView.swift in Sources */,
 				8552CEBC277F4BC900AD85C3 /* PhotoViewerViewController.swift in Sources */,
 				855AF69F277CF95600E7088B /* SceneDelegate.swift in Sources */,
+				855D39912783A9E6004FC869 /* ChatViewController.swift in Sources */,
 				85474215277E060900368235 /* RegisterViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

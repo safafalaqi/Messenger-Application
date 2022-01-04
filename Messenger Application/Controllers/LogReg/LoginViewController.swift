@@ -9,13 +9,13 @@ import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
 import GoogleSignIn
-//import JGProgressHUD
+import JGProgressHUD
 
 
 class LoginViewController: UIViewController{
 
     let templateColor = UIColor.white
-    //private let spinner = JGProgressHUD(style: .dark)
+    private let spinner = JGProgressHUD(style: .dark)
     
     let backgroundImageView : UIImageView = {
         let imageView = UIImageView()
@@ -269,10 +269,15 @@ class LoginViewController: UIViewController{
                   showAlertVC(title: "Enter a correct email and password")
                   return}
         
+         spinner.show(in: view)
         // Firebase Login weak self to avoid retention cycle
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self]  authResult, error in
+         
             guard let strongSelf = self else {
                 return
+            }
+            DispatchQueue.main.async {
+                strongSelf.spinner.dismiss()
             }
             guard let result = authResult, error == nil else {
                 print("Failed to log in user with email \(email)")
@@ -336,7 +341,7 @@ extension LoginViewController: LoginButtonDelegate{
         
         facebookRequest.start (completion: {connection , result, error in
             guard let result = result as? [String:Any] , error == nil else {
-                print("🔴failed to make graph request  - \(error)")
+                print("🔴failed to make graph request ")
                 
                 return
             }
@@ -358,7 +363,7 @@ extension LoginViewController: LoginButtonDelegate{
             
             //we get the crediential from facebook and pass them to firebase
             let crediential = FacebookAuthProvider.credential(withAccessToken: token)
-            
+            self.spinner.show(in: self.view)
             
             // now after obtaining the credinetial we pass it to firebase
             FirebaseAuth.Auth.auth().signIn(with:crediential , completion: { [weak self] authResult ,  error in
@@ -366,7 +371,7 @@ extension LoginViewController: LoginButtonDelegate{
                     return
                     
                 }
-                
+
                 guard authResult != nil, error == nil else {
                     if let error = error{
                         print("🔴Facebook log in failed  - \(error)")
@@ -374,7 +379,6 @@ extension LoginViewController: LoginButtonDelegate{
                     }
                     return
                 }
-                
                 print("🟢Successufly loged in")
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             })

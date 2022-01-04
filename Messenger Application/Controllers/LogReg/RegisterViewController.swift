@@ -7,12 +7,12 @@
 
 import UIKit
 import FirebaseAuth
-//import JGProgressHUD
+import JGProgressHUD
 
 class RegisterViewController: UIViewController {
 
     let templateColor = UIColor.white
-   // private let spinner = JGProgressHUD(style: .dark)
+    private let spinner = JGProgressHUD(style: .dark)
     
     let backgroundImageView : UIImageView = {
         let imageView = UIImageView()
@@ -237,9 +237,14 @@ class RegisterViewController: UIViewController {
               !password.isEmpty,
               password.count >= 6 else{ return}
         
+        spinner.show(in: view)
         //before creating a new user  make sure user with same email doesnot exisit
         DatabaseManager.shared.userExists(with: email, completion:{ exists in
-            //check if ex is nil
+            
+            DispatchQueue.main.async {
+                self.spinner.dismiss()
+            }
+            //check if exists
             guard !exists else{
                 //user exists
                 self.showAlertVC(message: "User is already exists")
