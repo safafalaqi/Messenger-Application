@@ -7,13 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		851517C62787AD740070A0B2 /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851517C52787AD740070A0B2 /* MessageModel.swift */; };
+		851517C82787D36E0070A0B2 /* ConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851517C72787D36E0070A0B2 /* ConversationCell.swift */; };
+		851517CA2787DC270070A0B2 /* DatabaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851517C92787DC270070A0B2 /* DatabaseModel.swift */; };
+		851517CC2789B5520070A0B2 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851517CB2789B5510070A0B2 /* UserModel.swift */; };
 		85474215277E060900368235 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85474214277E060900368235 /* RegisterViewController.swift */; };
 		85474218277E121800368235 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 85474217277E121800368235 /* GoogleService-Info.plist */; };
 		85474222277E25EF00368235 /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85474221277E25EF00368235 /* ConversationViewController.swift */; };
 		85474224277E262700368235 /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85474223277E262700368235 /* NewConversationViewController.swift */; };
 		85474226277E263900368235 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85474225277E263900368235 /* ProfileViewController.swift */; };
-		8552CEBC277F4BC900AD85C3 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8552CEBB277F4BC900AD85C3 /* PhotoViewerViewController.swift */; };
-		8552CEBE277F4BED00AD85C3 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8552CEBD277F4BED00AD85C3 /* VideoPlayerViewController.swift */; };
 		8552CEC1277F60D400AD85C3 /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8552CEC0277F60D400AD85C3 /* TextFieldView.swift */; };
 		855AF69D277CF95600E7088B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855AF69C277CF95600E7088B /* AppDelegate.swift */; };
 		855AF69F277CF95600E7088B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855AF69E277CF95600E7088B /* SceneDelegate.swift */; };
@@ -25,19 +27,22 @@
 		85665033277E90E100B4FA60 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 85665032277E90E100B4FA60 /* background.png */; };
 		85665037277E919900B4FA60 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 85665036277E919900B4FA60 /* logo.png */; };
 		85940D9A2780C7620064B240 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85940D992780C7620064B240 /* DatabaseManager.swift */; };
+		85E95B9827850D56003EA195 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E95B9727850D56003EA195 /* StorageManager.swift */; };
 		D2E43B761EA1789022B66C17 /* Pods_Messenger_Application.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522970D1EB6602447B4DBA25 /* Pods_Messenger_Application.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		39724FA9966617983B0F2C3B /* Pods-Messenger Application.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger Application.debug.xcconfig"; path = "Target Support Files/Pods-Messenger Application/Pods-Messenger Application.debug.xcconfig"; sourceTree = "<group>"; };
 		522970D1EB6602447B4DBA25 /* Pods_Messenger_Application.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger_Application.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		851517C52787AD740070A0B2 /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
+		851517C72787D36E0070A0B2 /* ConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCell.swift; sourceTree = "<group>"; };
+		851517C92787DC270070A0B2 /* DatabaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseModel.swift; sourceTree = "<group>"; };
+		851517CB2789B5510070A0B2 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		85474214277E060900368235 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		85474217277E121800368235 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		85474221277E25EF00368235 /* ConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
 		85474223277E262700368235 /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
 		85474225277E263900368235 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-		8552CEBB277F4BC900AD85C3 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
-		8552CEBD277F4BED00AD85C3 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		8552CEC0277F60D400AD85C3 /* TextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
 		855AF699277CF95600E7088B /* Messenger Application.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Messenger Application.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		855AF69C277CF95600E7088B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -51,6 +56,7 @@
 		85665032277E90E100B4FA60 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		85665036277E919900B4FA60 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 		85940D992780C7620064B240 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		85E95B9727850D56003EA195 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		BA20CBF6A01D48DF92314ABE /* Pods-Messenger Application.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger Application.release.xcconfig"; path = "Target Support Files/Pods-Messenger Application/Pods-Messenger Application.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,6 +105,7 @@
 				85474228277E267000368235 /* Storyboards */,
 				855AF6A5277CF95A00E7088B /* Assets.xcassets */,
 				8552CEC0277F60D400AD85C3 /* TextFieldView.swift */,
+				851517C72787D36E0070A0B2 /* ConversationCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -115,6 +122,9 @@
 		85497FB8278264F60085626F /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				851517C52787AD740070A0B2 /* MessageModel.swift */,
+				851517C92787DC270070A0B2 /* DatabaseModel.swift */,
+				851517CB2789B5510070A0B2 /* UserModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -173,6 +183,7 @@
 				85940D992780C7620064B240 /* DatabaseManager.swift */,
 				855AF69E277CF95600E7088B /* SceneDelegate.swift */,
 				855AF69C277CF95600E7088B /* AppDelegate.swift */,
+				85E95B9727850D56003EA195 /* StorageManager.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -180,12 +191,10 @@
 		85A32C5B2780B0080024E4D5 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				8552CEBB277F4BC900AD85C3 /* PhotoViewerViewController.swift */,
 				85474220277E25B500368235 /* LogReg */,
 				85474221277E25EF00368235 /* ConversationViewController.swift */,
 				85474223277E262700368235 /* NewConversationViewController.swift */,
 				85474225277E263900368235 /* ProfileViewController.swift */,
-				8552CEBD277F4BED00AD85C3 /* VideoPlayerViewController.swift */,
 				855D39902783A9E6004FC869 /* ChatViewController.swift */,
 			);
 			path = Controllers;
@@ -312,15 +321,18 @@
 				85474224277E262700368235 /* NewConversationViewController.swift in Sources */,
 				855AF6A1277CF95600E7088B /* LoginViewController.swift in Sources */,
 				855AF69D277CF95600E7088B /* AppDelegate.swift in Sources */,
-				8552CEBE277F4BED00AD85C3 /* VideoPlayerViewController.swift in Sources */,
 				85474222277E25EF00368235 /* ConversationViewController.swift in Sources */,
 				85474226277E263900368235 /* ProfileViewController.swift in Sources */,
 				85940D9A2780C7620064B240 /* DatabaseManager.swift in Sources */,
 				8552CEC1277F60D400AD85C3 /* TextFieldView.swift in Sources */,
-				8552CEBC277F4BC900AD85C3 /* PhotoViewerViewController.swift in Sources */,
+				851517C62787AD740070A0B2 /* MessageModel.swift in Sources */,
+				851517C82787D36E0070A0B2 /* ConversationCell.swift in Sources */,
 				855AF69F277CF95600E7088B /* SceneDelegate.swift in Sources */,
 				855D39912783A9E6004FC869 /* ChatViewController.swift in Sources */,
 				85474215277E060900368235 /* RegisterViewController.swift in Sources */,
+				851517CA2787DC270070A0B2 /* DatabaseModel.swift in Sources */,
+				851517CC2789B5520070A0B2 /* UserModel.swift in Sources */,
+				85E95B9827850D56003EA195 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,8 +492,8 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -513,8 +525,8 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

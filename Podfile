@@ -11,6 +11,8 @@ target 'Messenger Application' do
    pod 'Firebase/Auth' 
 
    pod 'Firebase/Database'
+
+   pod 'Firebase/Storage'
    
    # Facebook
    pod 'FBSDKLoginKit'

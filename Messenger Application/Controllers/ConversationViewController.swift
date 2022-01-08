@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import JGProgressHUD
+import AVFoundation
 
 
 class ConversationViewController: UIViewController {
@@ -18,11 +19,11 @@ class ConversationViewController: UIViewController {
     let navigationBarView = UINavigationBar()
     let topView = UIView()
     var viewContainingTableView = UIView()
+    private var conversations = [Conversation]()
     private let tableView: UITableView = {
         let table = UITableView()
-        table.isHidden = true // first fetch the conversations, if none (don't show empty convos)
-        
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.isHidden = true 
+        table.register(ConversationCell.self, forCellReuseIdentifier: ConversationCell.identifier)
         return table
     }()
     
@@ -35,11 +36,12 @@ class ConversationViewController: UIViewController {
         return label
     }()
     
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       
+
         //to start a new chat 
        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapComposeButton))
 
@@ -75,22 +77,59 @@ class ConversationViewController: UIViewController {
         
     
         setupTableView()
-        fetchConversations()
+        observeConversations()
         
+      
     }
     
+   
+    
     @objc private func didTapComposeButton(){
-        // present new conversation view controller
-        // present in a nav controller
-        
         let vc = NewConversationViewController()
+        vc.returnedResult = { result in
+            print(result)
+            self.createNewChat(result: result)
+        }
         let navVC = UINavigationController(rootViewController: vc)
         present(navVC,animated: true)
+    }
+    
+    
+    private func createNewChat(result:[String:String]){
+        guard let email = result["email"], let name = result["name"] else {return}
+       //first check if curerent user already has a conversation with selected user
+        let userEmail = DatabaseManager.safeEmail(email: email)
+        DatabaseManager.shared.checkExistsConversation(with: userEmail, completion: { [weak self] result in
+            switch result {
+            case .success(let conversationId):
+                let vc = ChatViewController(with: email, id: conversationId)
+                vc.isNewConversation = false
+                vc.title = name
+                vc.navigationItem.largeTitleDisplayMode = .never
+                self?.navigationController?.pushViewController(vc, animated: true)
+            case .failure(_): //if no id found start a new conversation
+                let vc = ChatViewController(with: email, id: nil)
+                vc.isNewConversation = true
+                vc.title = name
+                vc.navigationItem.largeTitleDisplayMode = .never
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        })
+        
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
+
+        noConversationsLabel.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        noConversationsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        noConversationsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        noConversationsLabel.translatesAutoresizingMaskIntoConstraints = false
+        noConversationsLabel.lineBreakMode = .byWordWrapping
+        noConversationsLabel.numberOfLines = 0
+        noConversationsLabel.textColor = .purple
+        noConversationsLabel.textAlignment = .center
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -98,8 +137,7 @@ class ConversationViewController: UIViewController {
         navigationItem.rightBarButtonItem?.tintColor = .white
         //if no current user is logged in navigate to login page
         validateUser()
-        
-        
+
     }
     
     func validateUser()
@@ -117,42 +155,70 @@ class ConversationViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
     }
-    
-    private func fetchConversations(){
-        // fetch from firebase and either show table or label
         
-        tableView.isHidden = false
+    
+    func observeConversations(){
+        guard let email =  UserDefaults.standard.value(forKey: "email") as? String else{
+            return
+        }
+        
+        let safeEmail = DatabaseManager.safeEmail(email: email)
+        DatabaseManager.shared.getAllConversations(for: safeEmail, completion:{[weak self] result in
+            switch result {
+            case .success(let conversations):
+                guard !conversations.isEmpty else{
+                    return
+                }
+                self?.conversations = conversations
+                print("success")
+                DispatchQueue.main.async {
+                    self?.tableView.isHidden = false
+                    self?.noConversationsLabel.isHidden = true
+                    self?.tableView.reloadData()
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self?.noConversationsLabel.isHidden = false
+                    self?.tableView.isHidden = true
+                }
+                print("failed: \(error)")
+                
+            }
+        })
     }
 }
 
 
 extension ConversationViewController: UITableViewDelegate, UITableViewDataSource {
     
-    
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return conversations.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = "Hello World"
+        let cell = tableView.dequeueReusableCell(withIdentifier: ConversationCell.identifier, for: indexPath) as! ConversationCell
+        let data = conversations[indexPath.row]
+        cell.setConversationInfo(with: data)
         cell.accessoryType = .disclosureIndicator
         return cell
     }
     
-     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-      cell.backgroundColor = UIColor(white: 1, alpha: 0.5)
-    }
     
     // when user taps on a cell, we want to push the chat screen onto the stack
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        let vc = ChatViewController()
-        vc.title = "Jenny Smith"
+        let data = conversations[indexPath.row]
+        let vc = ChatViewController(with: data.otherUserEmail, id: data.id)
+        vc.isNewConversation = false
+        vc.title = data.name
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 120
+    }
+
 }
+
 
 

@@ -209,7 +209,7 @@ class LoginViewController: UIViewController{
         fbLoginButton.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 20.0).isActive = true
         fbLoginButton.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor, constant: 0.0).isActive = true
         fbLoginButton.trailingAnchor.constraint(equalTo: emailTextField.trailingAnchor, constant: 0.0).isActive = true
-        fbLoginButton.heightAnchor.constraint(equalToConstant: signInButtonHeight).isActive = true
+        //fbLoginButton.heightAnchor.constraint(equalToConstant: signInButtonHeight).isActive = true
         
         //google sign in button
         view.insertSubview(googleLoginButton, aboveSubview: bgView)
@@ -284,8 +284,24 @@ class LoginViewController: UIViewController{
                 strongSelf.showAlertVC(title: "Enter a correct email and password")
                 return
             }
-            let user = result.user
-            print("logged in user: \(user)")
+        
+            let safeEmail = DatabaseManager.safeEmail(email: email)
+            DatabaseManager.shared.getCurrentUserName(email: safeEmail) { result in
+                switch result {
+                case .success(let user):
+                    guard let userData = user as? [String:Any] ,
+                          let firstName = userData["first_name"] as? String,
+                          let lastName = userData["last_name"] as? String
+                    else{
+                        return
+                    }
+                UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
+                case .failure(let error): print("failed to load name \(error)")
+                }
+            }
+            UserDefaults.standard.set(email, forKey: "email")
+            
+            print("logged in user: \(email)")
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
         
@@ -337,7 +353,7 @@ extension LoginViewController: LoginButtonDelegate{
             return
         }
         
-        let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "/me",parameters: ["fields": "email, first_name, last_name"],tokenString: token, version: nil,httpMethod: .get)
+        let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "/me",parameters: ["fields": "email, first_name, last_name ,picture.type(large)"],tokenString: token, version: nil,httpMethod: .get)
         
         facebookRequest.start (completion: {connection , result, error in
             guard let result = result as? [String:Any] , error == nil else {
@@ -346,17 +362,57 @@ extension LoginViewController: LoginButtonDelegate{
                 return
             }
             print("🔵\(result)")
+            /*["first_name": Safa, "last_name": Falaqi, "id": 1332535203835429, "picture": {
+             data =     {
+                 height = 180;
+                 "is_silhouette" = 1;
+                 url = "https://scontent.fjed4-5.fna.fbcdn.net/v/t1.30497-1/c59.0.200.200a/p200x200/84628273_176159830277856_972693363922829312_n.jpg?_nc_cat=1&ccb=1-5&_nc_sid=12b3be&_nc_ohc=-xVKYANKnb0AX9Hmj0g&_nc_ht=scontent.fjed4-5.fna&edm=AP4hL3IEAAAA&oh=00_AT_z3q-mGQcpjZp_F9YyetTfOCK7pVaWnTvCFAgAMZ4ZAA&oe=61F91439";
+                 width = 180;
+             };
+         }, "email": sfalaqi@gmail.com]
+            */
+            
             guard let firstName = result["first_name"] as? String,
                   let lastName = result["last_name"] as? String,
-                  let email = result["email"] as? String
+                  let email = result["email"] as? String,
+                  let profilePicture = result["picture"] as? [String: Any],
+                  let data = profilePicture["data"] as? [String: Any],
+                  let pictureUrl = data["url"] as? String
             else{
                 print("🔴failed to get email and name")
                 return
             }
+            UserDefaults.standard.set(email, forKey: "email")
+            UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
             //we need to add them to the real database but first check if exists
             DatabaseManager.shared.userExists(with: email, completion:{exists in
                 if !exists{
-                    DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                    let user = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)
+                    DatabaseManager.shared.insertUser(with: user) { success in
+                        if success {
+                            guard let url = URL(string: pictureUrl) else {
+                                return
+                            }
+                            print("🟡Download image from FB")
+                            URLSession.shared.dataTask(with: url) { data, _ , _ in
+                                guard let data = data else{
+                                    print("❌faild to get image from FB")
+                                    return
+                                }
+                                print("🔵Upload image into Firebase")
+                                //upload user image in here
+                                let fileName = user.profilePictureFileName
+                                StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName) { result in
+                                    switch result{
+                                    case .success(let downloadUrl):
+                                        UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                        print("✅ \(downloadUrl)")
+                                    case .failure(let error): print(error)
+                                    }
+                                }
+                            }.resume()
+                        }
+                    }
                 }
             })
             
@@ -371,7 +427,9 @@ extension LoginViewController: LoginButtonDelegate{
                     return
                     
                 }
-
+            
+            
+           
                 guard authResult != nil, error == nil else {
                     if let error = error{
                         print("🔴Facebook log in failed  - \(error)")
@@ -379,7 +437,7 @@ extension LoginViewController: LoginButtonDelegate{
                     }
                     return
                 }
-                print("🟢Successufly loged in")
+                print("🟢Successufly loged in \(email)")
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             })
             

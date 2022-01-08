@@ -10,7 +10,7 @@ import FirebaseAuth
 import JGProgressHUD
 
 class RegisterViewController: UIViewController {
-
+    
     let templateColor = UIColor.white
     private let spinner = JGProgressHUD(style: .dark)
     
@@ -26,7 +26,7 @@ class RegisterViewController: UIViewController {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.alpha = 0.8
-        imageView.image = UIImage(systemName: "person.circle")
+        imageView.image = UIImage(named: "defaultImage.png")
         imageView.contentMode = .scaleAspectFit
         //imageView.layer.masksToBounds = true
         imageView.layer.masksToBounds = false
@@ -77,8 +77,8 @@ class RegisterViewController: UIViewController {
         return button
     }()
     
- 
-   
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
@@ -93,18 +93,18 @@ class RegisterViewController: UIViewController {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
         self.view.addGestureRecognizer(tapGesture)
-
+        
         //to move the cursor to next field
         firstName.textField.delegate = self
         lastName.textField.delegate = self
         emailTextField.textField.delegate = self
         passwordTextfield.textField.delegate = self
-
+        
         firstName.textField.tag = 1
         lastName.textField.tag = 2
         emailTextField.textField.tag = 3
         passwordTextfield.textField.tag = 4
-     
+        
     }
     //to hide keyboard when clicking outside the text fields
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
@@ -154,8 +154,8 @@ class RegisterViewController: UIViewController {
         accountImage.widthAnchor.constraint(equalTo: accountImage.heightAnchor, constant: 0.0).isActive = true
         accountImage.isUserInteractionEnabled = true
         accountImage.tintColor = templateColor
-       
-
+        
+        
         
         // First Name
         view.insertSubview(firstName, aboveSubview: bgView)
@@ -194,7 +194,7 @@ class RegisterViewController: UIViewController {
         emailTextField.imgView.image = UIImage(systemName:"envelope.fill")
         emailTextField.textField.attributedPlaceholder = NSAttributedString(string: "Email", attributes: attributesDictionary)
         emailTextField.textField.textColor = templateColor
- 
+        
         
         // Password textfield and icon
         view.insertSubview(passwordTextfield, aboveSubview: bgView)
@@ -219,11 +219,11 @@ class RegisterViewController: UIViewController {
                                           NSAttributedString.Key.foregroundColor: templateColor]
         registerButton.alpha = 0.4
         registerButton.backgroundColor = UIColor.lightGray
-        registerButton.setAttributedTitle(NSAttributedString(string: "SIGN IN", attributes: buttonAttributesDictionary), for: .normal)
+        registerButton.setAttributedTitle(NSAttributedString(string: "Register", attributes: buttonAttributesDictionary), for: .normal)
         registerButton.isEnabled = true
         registerButton.addTarget(self, action: #selector(registerButtonTapped(button:)), for: .touchUpInside)
         
-    
+        
     }
     
     @objc private func registerButtonTapped(button: UIButton) {
@@ -255,21 +255,40 @@ class RegisterViewController: UIViewController {
         //create an account in Firebase
         FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: {[weak self]  authResult , error  in
             guard let strongSelf = self else {
-                   return
-               }
+                return
+            }
             guard authResult != nil, error == nil else {
                 print("Error creating user")
                 
                 return
             }
-        
+ 
+            let user = ChatAppUser(firstName: fName , lastName: lName, emailAddress: email)
+            UserDefaults.standard.set(email, forKey: "email")
+            UserDefaults.standard.set("\(fName) \(lName)", forKey: "name")
             //before dissmising add to the database the first name and the last name
-            DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: fName , lastName: lName, emailAddress: email))
+            DatabaseManager.shared.insertUser(with: user) { success in
+                if success {
+                    //upload user image in here
+                    guard let image = strongSelf.accountImage.image, let data = image.jpegData(compressionQuality: 0.5) else {
+                        return
+                    }
+                    let fileName = user.profilePictureFileName
+                    StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName) { result in
+                        switch result{
+                        case .success(let downloadUrl):
+                            UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                            print("✅ \(downloadUrl)")
+                        case .failure(let error): print(error)
+                        }
+                    }
+                }
+            }
             
             
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
-
+        
     }
     
     func showAlertVC(message: String = "Enter all required information") {
@@ -282,7 +301,7 @@ class RegisterViewController: UIViewController {
 
 
 extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+    
     func presentPhotoActionSheet() {
         let actionSheet = UIAlertController(title: "Profile Picture",
                                             message: "How would you like to select a picture?",
@@ -293,21 +312,21 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
         actionSheet.addAction(UIAlertAction(title: "Take Photo",
                                             style: .default,
                                             handler: { [weak self] _ in
-
-                                                self?.presentCamera()
-
+            
+            self?.presentCamera()
+            
         }))
-        actionSheet.addAction(UIAlertAction(title: "Chose Photo",
+        actionSheet.addAction(UIAlertAction(title: "Choose Photo",
                                             style: .default,
                                             handler: { [weak self] _ in
-
-                                                self?.presentPhotoPicker()
-
+            
+            self?.presentPhotoPicker()
+            
         }))
-
+        
         present(actionSheet, animated: true)
     }
-
+    
     func presentCamera() {
         let vc = UIImagePickerController()
         vc.sourceType = .camera
@@ -315,7 +334,7 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
         vc.allowsEditing = true
         present(vc, animated: true)
     }
-
+    
     func presentPhotoPicker() {
         let vc = UIImagePickerController()
         vc.sourceType = .photoLibrary
@@ -323,21 +342,21 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
         vc.allowsEditing = true
         present(vc, animated: true)
     }
-
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
             return
         }
-
+        
         self.accountImage.image = selectedImage
         self.accountImage.contentMode = .scaleAspectFill
     }
-
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-
+    
 }
 
 
@@ -346,9 +365,9 @@ extension RegisterViewController: UITextFieldDelegate {
         //Check if there is any other text-field in the view whose tag is +1 greater than the current text-field on which the return key was pressed. If yes → then move the cursor to that next text-field. If No → Dismiss the keyboard
         if let nextField = self.view.viewWithTag(textField.tag + 1) as? UITextField {
             nextField.becomeFirstResponder()
-            } else {
-                registerButtonTapped(button: registerButton)
-            }
+        } else {
+            registerButtonTapped(button: registerButton)
+        }
         return false
     }
 }
