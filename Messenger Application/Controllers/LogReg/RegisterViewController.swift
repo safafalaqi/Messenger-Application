@@ -285,7 +285,10 @@ class RegisterViewController: UIViewController {
                 }
             }
             
-            
+            let safeEmail = DatabaseManager.safeEmail(email: email)
+            DatabaseManager.shared.userIsOnline(for: safeEmail){ (success) in
+            //print("User sign in ==>", success)
+            }
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
         

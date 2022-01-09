@@ -19,6 +19,9 @@ class ConversationViewController: UIViewController {
     let navigationBarView = UINavigationBar()
     let topView = UIView()
     var viewContainingTableView = UIView()
+    
+    var onlineUsers:[[String:String]]?
+    
     private var conversations = [Conversation]()
     private let tableView: UITableView = {
         let table = UITableView()
@@ -78,10 +81,25 @@ class ConversationViewController: UIViewController {
     
         setupTableView()
         observeConversations()
-        
+        observeOnlineUsers()
       
     }
     
+    func observeOnlineUsers(){
+        DatabaseManager.shared.getOnlineUsers { result in
+            switch result {
+            case .success(let data):
+                print("🟢 \(data)")
+                self.onlineUsers = data
+                DispatchQueue.main.async {
+                    self.tableView.isHidden = false
+                    self.tableView.reloadData()
+                }
+            case .failure(let error):
+                print("🔴unable to get online users \(error)")
+           }
+        }
+    }
    
     
     @objc private func didTapComposeButton(){
@@ -137,7 +155,8 @@ class ConversationViewController: UIViewController {
         navigationItem.rightBarButtonItem?.tintColor = .white
         //if no current user is logged in navigate to login page
         validateUser()
-
+        observeConversations()
+        observeOnlineUsers()
     }
     
     func validateUser()
@@ -161,7 +180,7 @@ class ConversationViewController: UIViewController {
         guard let email =  UserDefaults.standard.value(forKey: "email") as? String else{
             return
         }
-        
+  
         let safeEmail = DatabaseManager.safeEmail(email: email)
         DatabaseManager.shared.getAllConversations(for: safeEmail, completion:{[weak self] result in
             switch result {
@@ -198,6 +217,18 @@ extension ConversationViewController: UITableViewDelegate, UITableViewDataSource
         let cell = tableView.dequeueReusableCell(withIdentifier: ConversationCell.identifier, for: indexPath) as! ConversationCell
         let data = conversations[indexPath.row]
         cell.setConversationInfo(with: data)
+        cell.profileImageView.layer.borderWidth = 1
+        cell.profileImageView.layer.borderColor = UIColor.gray.cgColor
+        if let list = onlineUsers{
+            for user in list{
+                if user["email"] == data.otherUserEmail
+                {
+                    cell.profileImageView.layer.borderColor = UIColor.init(rgb: 0x00A300).cgColor
+                    cell.profileImageView.layer.borderWidth = 5
+                    break
+                }
+            }
+        }
         cell.accessoryType = .disclosureIndicator
         return cell
     }

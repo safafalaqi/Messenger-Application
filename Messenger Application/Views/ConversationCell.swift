@@ -10,6 +10,7 @@ import SDWebImage
 
 class ConversationCell: UITableViewCell {
     static let identifier = "conversationCell"
+    
     let profileImageView:UIImageView = {
         let img = UIImageView()
         img.contentMode = .scaleAspectFill
@@ -103,7 +104,6 @@ class ConversationCell: UITableViewCell {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         let date = dateFormatter.date(from: data.latestMessage.date)
-        
         dateLabel.text = date?.toString(format: "h:mm a")
         nameLabel.text = data.name
         messageLabel.text = data.latestMessage.message

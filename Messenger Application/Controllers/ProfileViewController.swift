@@ -116,21 +116,32 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
                 return
             }
             
+            //handle when user is online or not
+            guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {return}
+            let safeEmail = DatabaseManager.safeEmail(email: currentEmail)
+            DatabaseManager.shared.userIsOffline(for: safeEmail){ (success) in
+            //print("User sign out ==>", success)
+            }
+
+            
             UserDefaults.standard.setValue(nil, forKey: "email")
             UserDefaults.standard.setValue(nil, forKey: "name")
-      
-            
+            UserDefaults.standard.removeObject(forKey: "email")
+            UserDefaults.standard.removeObject(forKey: "name")
+        
             //log out from facebook session
             FBSDKLoginKit.LoginManager().logOut()
             //google sign out
             GIDSignIn.sharedInstance.signOut()
-            
+           
             do{
                 try FirebaseAuth.Auth.auth().signOut()
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
                 let vc = LoginViewController()
                 let nav = UINavigationController(rootViewController: vc)
                 nav.modalPresentationStyle = .fullScreen
                 strongSelf.present(nav,animated: true)
+                }
             }catch{
                 print("faild")
             }

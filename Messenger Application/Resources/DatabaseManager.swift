@@ -9,6 +9,7 @@ import Foundation
 import FirebaseDatabase
 import UIKit
 import MessageKit
+
 // singleton creation below
 // final - cannot be subclassedcopy
 final class DatabaseManager {
@@ -26,8 +27,79 @@ final class DatabaseManager {
     }
     
 }
+
+
+
 // MARK: - account management
 extension DatabaseManager {
+    
+    public func userIsOnline(for safeEmail: String, success: @escaping (Bool) -> Void) {
+        //["email": sfalaqi-gmail-com]
+        //add user to the list of users in database
+        database.child("online_users").observeSingleEvent(of: .value, with: { [weak self]snapshot in
+            
+            guard let strongSelf = self else {
+                return
+            }
+            if var onlineUsersList = snapshot.value as? [[String: String]] {
+                let newElement = [ "email": safeEmail ]
+                onlineUsersList.append(newElement)
+                strongSelf.database.child("online_users").setValue(onlineUsersList, withCompletionBlock: { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+            else {
+                // create a new list
+                let newList: [[String: String]] = [[ "email": safeEmail]]
+                strongSelf.database.child("online_users").setValue(newList, withCompletionBlock: { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+        })
+    }
+    public func userIsOffline(for safeEmail: String, success: @escaping (Bool) -> Void) {
+        //delete user from the list
+        let ref = database.child("online_users")
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if var users = snapshot.value as? [[String: String]] {
+                var positionToRemove = 0
+                for user in users {
+                    if let email = user["email"] as? String,
+                       email == safeEmail {
+                        print("found user to delete")
+                        break
+                    }
+                    positionToRemove += 1
+                }
+                users.remove(at: positionToRemove)
+                ref.setValue(users, withCompletionBlock: { error, _  in
+                    guard error == nil else {
+                        
+                        print("faield to add new user to the online users list")
+                        return
+                    }
+                    print("deleted online user")
+                    
+                })
+            }
+        }
+    }
+    //get all online users
+    public func getOnlineUsers(completion: @escaping (Result<[[String: String]], Error>) -> Void){
+        database.child("online_users").observe(.value, with: { snapshot in
+            guard let value = snapshot.value as? [[String: String]] else {
+                completion(.failure(DatabaseError.failedToFetch))
+                return
+            }
+            completion(.success(value))
+        })
+    }
+
+    
     // have a completion handler because the function to get data out of the database is asynchrounous so we need a completion block
     public func userExists(with email: String, completion: @escaping ((Bool) -> Void)) {
         let safeEmail = DatabaseManager.safeEmail(email: email)
@@ -253,7 +325,7 @@ extension DatabaseManager {
         return ""
     }
     
-    //
+    
     private func finishCreatingConversation(conversationID:String ,name: String,firstMessage: Message, completion: @escaping (Bool) -> Void){
         let messageDate = firstMessage.sentDate
         let dateString = ChatViewController.dateFormatter.string(from: messageDate)

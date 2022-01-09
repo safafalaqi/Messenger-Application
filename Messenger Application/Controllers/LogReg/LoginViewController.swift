@@ -98,7 +98,8 @@ class LoginViewController: UIViewController{
         //https://stackoverflow.com/questions/59419459/how-do-a-comunication-from-viewcontroller-to-appdelegate
         // comunication from LoginViewController to appdelegate
         loginObserver = NotificationCenter.default.addObserver(forName: Notification.Name("didLogIn"), object: nil,  queue: .main,using:{ [weak self] _ in
-            guard let strongSelf = self else {return}
+            guard let strongSelf = self , let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {return}
+            strongSelf.setOnline(email: currentEmail)
             strongSelf.navigationController?.dismiss(animated: true, completion: nil )
         })
         
@@ -300,8 +301,8 @@ class LoginViewController: UIViewController{
                 }
             }
             UserDefaults.standard.set(email, forKey: "email")
-            
             print("logged in user: \(email)")
+            strongSelf.setOnline(email: email)
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
         
@@ -325,6 +326,15 @@ class LoginViewController: UIViewController{
         let cancelAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion:{})
+    }
+    
+    //set user online when login
+    func setOnline(email: String){
+        //guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {return}
+        let safeEmail = DatabaseManager.safeEmail(email: email)
+        DatabaseManager.shared.userIsOnline(for: safeEmail){ (success) in
+        //print("User sign in ==>", success)
+        }
     }
 }
 
@@ -384,6 +394,7 @@ extension LoginViewController: LoginButtonDelegate{
             }
             UserDefaults.standard.set(email, forKey: "email")
             UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
+            
             //we need to add them to the real database but first check if exists
             DatabaseManager.shared.userExists(with: email, completion:{exists in
                 if !exists{
@@ -427,7 +438,7 @@ extension LoginViewController: LoginButtonDelegate{
                     return
                     
                 }
-            
+              
             
            
                 guard authResult != nil, error == nil else {
@@ -438,6 +449,7 @@ extension LoginViewController: LoginButtonDelegate{
                     return
                 }
                 print("🟢Successufly loged in \(email)")
+                strongSelf.setOnline(email: email)
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             })
             

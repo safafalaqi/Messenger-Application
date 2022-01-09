@@ -35,9 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let clientId = FirebaseApp.app()?.options.clientID {
             signInConfig = GIDConfiguration.init(clientID: clientId)
         }
+
         
         return true
     }
+    
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         var handled: Bool
@@ -47,6 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         return false
     }
+    
+    
     
     func handleGoogleSession(user: GIDGoogleUser) {
         guard let email = user.profile?.email,
