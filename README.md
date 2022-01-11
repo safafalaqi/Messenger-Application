@@ -48,7 +48,7 @@ https://user-images.githubusercontent.com/25467471/148713116-0f7029d2-9117-44a8-
 https://user-images.githubusercontent.com/25467471/148714820-1cb8b2b8-78d7-4b31-9bb8-4eb7b8052da2.mp4
 
 
-
+<a href="https://www.vecteezy.com/vector-art/561480-chat-app-logo-icon-vector">Logo vector by Vecteezy</a>
 
 ### References:
 
